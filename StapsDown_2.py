@@ -95,7 +95,9 @@ class stapsdown:
                , "size" : 1000
         }
 
-      results = self.es.search(index='ct22-enrich_staps', body=query)
+      index_pattern = "ct22-enrich_staps*"
+
+      results = self.es.search(index=index_pattern, body=query)
 
       data = pd.DataFrame.from_dict(results['hits']['hits'])
 
@@ -103,11 +105,12 @@ class stapsdown:
       # ic(list_stap_coll)
       self.df_stap_coll = pd.DataFrame.from_dict(list_stap_coll)
       self.df_stap_coll['Last Response Received'] = pd.to_datetime(self.df_stap_coll['Last Response Received'])
-      ic(self.df_stap_coll)
+      # ic(self.df_stap_coll)
 
-      # pivot_table = self.df_stap_coll.pivot_table(values='Last Response Received', index=['Collector','S-TAP Host'] , aggfunc=np.max, columns=['Collector','S-TAP Host'])
-      pivot_table = self.df_stap_coll.pivot_table(values='Last Response Received', index=['Collector','S-TAP Host'] , aggfunc=np.max)
-
+      pivot_table = self.df_stap_coll.pivot_table(values='Last Response Received', index=['Collector','S-TAP Host'] , aggfunc='max', sort=True)
+      # Sort by values in a specific column
+      pivot_table.sort_values(by='Last Response Received', ascending=False, inplace=True)
+      ic(pivot_table)
 
       # for i in range(df.shape[0]):
       parsed = []
@@ -123,13 +126,6 @@ class stapsdown:
 
       # breakpoint()
 
-      # print (pivot_table)
-      # print (type(pivot_table))
-      # print (len(pivot_table))
-
-      # Convert the DataFrame to a dictionary, using the 'records' orient
-      # Dict = pivot_table.to_dict(orient='records')
-      # breakpoint()
       p1.purge_ES()
       count = p1.into_ES(parsed)
 
@@ -168,8 +164,5 @@ if __name__ == '__main__':
 
     p1.collstap()
 
-    # doc_count_total = doc_count_total + doc_count
-    # print ('Nbr of Docs Processed' , doc_count_total)
-    os.system('rm -f ' + p1.path + 'Staps_Enrich_In_Progress')
     print("End STAP Down detection")
 

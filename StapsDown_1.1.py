@@ -34,7 +34,7 @@ class stapsdown:
        print ("After connection to ES")
 
        self.fullSQLMany=[]
-
+       self.na_staps = {}
 
        self.InProg = self.path + 'Staps_Enrich_In_Progress'
        if os.path.exists(self.InProg) == True :
@@ -58,7 +58,10 @@ class stapsdown:
         # ---- Get A_IPs
         # print(myListIPs)
         self.myListStaps = p1.get_Agents()
-        # breakpoint()
+        columns_staps = self.myListStaps.columns.tolist()
+        for column in columns_staps :
+            self.na_staps [column] = 'N/A'
+        breakpoint()
         # print(type(self.myListIPs), " -- " ,self.myListIPs)
 
         # ---- Get Collectors
@@ -152,7 +155,7 @@ class stapsdown:
         server_metadata = self.myListStaps[self.myListStaps['Hostname']==lineDict['S-TAP Host']]
         # ic (server_metadata)
         if server_metadata.empty == True :
-              # --- Return ---
+              lineDict["Server Metadata"] self.na_staps
               return(lineDict)
         else:
            server_metadata = server_metadata.to_dict(orient='records')[0]
