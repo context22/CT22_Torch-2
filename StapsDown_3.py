@@ -172,7 +172,7 @@ class stapsoutage:
       return()
 
   def into_ES(self, parsed):
-      breakpoint()
+      # breakpoint()
       try:
          response = helpers.bulk(self.es,parsed, index='ct22_staps_outage')
          print ("ES response : ", response )

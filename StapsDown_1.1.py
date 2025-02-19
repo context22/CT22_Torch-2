@@ -35,6 +35,7 @@ class stapsdown:
 
        self.fullSQLMany=[]
        self.na_staps = {}
+       self.na_colls = {}
 
        self.InProg = self.path + 'Staps_Enrich_In_Progress'
        if os.path.exists(self.InProg) == True :
@@ -61,12 +62,16 @@ class stapsdown:
         columns_staps = self.myListStaps.columns.tolist()
         for column in columns_staps :
             self.na_staps [column] = 'N/A'
-        breakpoint()
+        # breakpoint()
         # print(type(self.myListIPs), " -- " ,self.myListIPs)
 
         # ---- Get Collectors
         self.myListColls = p1.get_Colls()
         # print(type(self.myListIPs), " -- " ,self.myListIPs)
+        columns_colls = self.myListColls.columns.tolist()
+        for column in columns_colls :
+            self.na_colls [column] = 'N/A'
+        # breakpoint()
 
         return()
 
@@ -155,7 +160,7 @@ class stapsdown:
         server_metadata = self.myListStaps[self.myListStaps['Hostname']==lineDict['S-TAP Host']]
         # ic (server_metadata)
         if server_metadata.empty == True :
-              lineDict["Server Metadata"] self.na_staps
+              lineDict["Server Metadata"] = self.na_staps
               return(lineDict)
         else:
            server_metadata = server_metadata.to_dict(orient='records')[0]
@@ -165,9 +170,10 @@ class stapsdown:
         return(lineDict)
 
     def enrich_coll(self, lineDict):
-        coll_metadata = self.myListColls[self.myListColls['Colls']==lineDict['Collector']]
+        # breakpoint()
+        coll_metadata = self.myListColls[self.myListColls['Collectors']==lineDict['Collector']]
         if coll_metadata.empty == True :
-              # --- Return ---
+              lineDict["Collector Metadata"] = self.na_colls
               return(lineDict)
         else:
            coll_metadata = coll_metadata.to_dict(orient='records')[0]
